@@ -1,4 +1,4 @@
-package com.helthcare;
+package com.healthcare.servlet;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
