@@ -1,37 +1,50 @@
 package com.healthcare.model;
 
-import java.util.HashMap;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import com.healthcare.service.DBManager;
-
-@Path("/user")
 public class User {
-
-	@Path("/register")
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public HashMap<String, String> getUserRegister(@FormParam("username")String username, @FormParam("email")String email, @FormParam("password")String password, @FormParam("mobileNumber")String mobileNumber){
-		
-		HashMap<String, String> h = new HashMap<>();
-		
-		int i = DBManager.getUser(username, email, password, mobileNumber);
-		
-		if(i > 0) {
-			h.put("register", "success");
-		}else {
-			h.put("register", "failed");
-		}
-		
-		return h;
+	
+	private int userId;
+	private String username;
+	private String email;
+	private String password;
+	private String mobileNumber;
+	
+	public User(int userId, String username, String email, String password, String mobileNumber) {
+		super();
+		this.userId = userId;
+		this.username = username;
+		this.email = email;
+		this.password = password;
+		this.mobileNumber = mobileNumber;
 	}
-	
-	
+	public int getUserId() {
+		return userId;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
 }
