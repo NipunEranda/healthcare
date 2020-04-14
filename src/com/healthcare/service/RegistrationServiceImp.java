@@ -2,6 +2,8 @@ package com.healthcare.service;
 
 import java.util.HashMap;
 
+import com.healthcare.model.User;
+
 
 public class RegistrationServiceImp implements RegistrationService {
 
@@ -19,5 +21,12 @@ public class RegistrationServiceImp implements RegistrationService {
 		return h;
 	}
 
+	@Override
+	public User getUserDetails(String userId) {
+		HashMap<String, String> h = new HashMap<>();
+		User user = DBManager.getUserDetails(userId);
+		
+		return user;
+	}
 
 }

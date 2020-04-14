@@ -6,6 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+
+import com.healthcare.model.User;
 
 public class DBManager {
 
@@ -32,7 +35,7 @@ public class DBManager {
 		try {
 
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-			
+
 			String insertSQL1 = "INSERT INTO login VALUES(?, ?, ?, ?)";
 			String insertSQL2 = "INSERT INTO user VALUES(?, ?, ?, ?, ?)";
 			String emailVarification = "SELECT * FROM login WHERE Login_Email = ?";
@@ -57,7 +60,7 @@ public class DBManager {
 
 				ResultSet rs2 = ps_getUId.executeQuery();
 
-				while(rs2.next()) {
+				while (rs2.next()) {
 
 					if (i > 0) {
 
@@ -83,5 +86,31 @@ public class DBManager {
 			e.printStackTrace();
 		}
 		return i;
+	}
+
+	public static User getUserDetails(String userId) {
+		User user = null;
+		try {
+
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+
+			String getSql = "SELECT u.UFullName, l.Login_Email, u.UMobile, u.UAddress FROM user u, login l WHERE u.User_Id = ? AND u.Login_id = l.Login_Id";
+
+			PreparedStatement ps_getUserDetails = con.prepareStatement(getSql);
+			ps_getUserDetails.setInt(1, Integer.parseInt(userId));
+
+			ResultSet rs = ps_getUserDetails.executeQuery();
+
+			while (rs.next()) {
+
+				user = new User(Integer.parseInt(userId), rs.getString(1), rs.getString(2), rs.getString(3),
+						rs.getString(4));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return user;
 	}
 }
