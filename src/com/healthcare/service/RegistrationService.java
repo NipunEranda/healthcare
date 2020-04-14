@@ -14,4 +14,5 @@ public interface RegistrationService {
 	public User deleteUser(String userId);
 	public User updateUser(String userId, String username, String email, String mobileNumber, String address);
 	public String resetPassword(String User_Id, String currentPassword, String newPassword);
+	public String verifyPassword(String User_Id, String currentPassword);
 }

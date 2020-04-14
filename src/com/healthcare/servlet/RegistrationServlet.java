@@ -94,5 +94,13 @@ public class RegistrationServlet {
 		return status;
 	}
 	
+	@POST
+	@Path("/verifyPassword")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String verifyPassword(@FormParam("User_Id") String User_Id, @FormParam("currentPassword") String currentPassword) {
+		String status = registrationServiceObj.verifyPassword(User_Id, currentPassword);
+		return status;
+	}
 	
 }
