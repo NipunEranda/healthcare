@@ -59,4 +59,10 @@ public class RegistrationServiceImp implements RegistrationService {
 		return status;
 	}
 
+	@Override
+	public String verifyPassword(String User_Id, String currentPassword) {
+		String status = DBManager.verifyPassword(User_Id, currentPassword);
+		return status;
+	}
+
 }
