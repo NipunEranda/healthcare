@@ -6,13 +6,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.healthcare.model.User;
 
 public class DBManager {
 
-	static final String DBDriver = "com.mysql.jdbc.Driver";
+	static final String DBDriver = "com.mysql.cj.jdbc.Driver";
 	static final String DBUrl = "jdbc:mysql://localhost:3306/test";
 	static final String DBUser = "root";
 	static final String DBPassword = "4212";
@@ -87,6 +88,52 @@ public class DBManager {
 		}
 		return i;
 	}
+	
+	public static int getLoginId(String userId) {
+		int loginId = 0;
+		try {
+			
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			String getLoginId = "SELECT Login_id FROM user WHERE User_Id = " + userId;
+			PreparedStatement ps_getLoginId = con.prepareStatement(getLoginId);
+			ResultSet rs_getLoginId = ps_getLoginId.executeQuery();
+			
+			while (rs_getLoginId.next()) {
+				loginId = rs_getLoginId.getInt(1);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return loginId;
+	}
+	
+	public static String verifyPassword(String UserId, String currentPassword) {
+		String status = null;
+		
+		try {
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			int loginId = getLoginId(UserId);
+			String getLoginId = "SELECT * FROM login WHERE Login_Id = ? AND Login_Password = ?";
+			
+			PreparedStatement ps_verifyPassword = con.prepareStatement(getLoginId);
+			ps_verifyPassword.setInt(1, loginId);
+			ps_verifyPassword.setString(2, currentPassword);
+			
+			ResultSet rs_verifyPassword = ps_verifyPassword.executeQuery();
+			
+			if(rs_verifyPassword.first()) {
+				status = "success";
+			}else {
+				status = "fail";
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return status;
+	}
 
 	public static User getUserDetails(String userId) {
 		User user = null;
@@ -103,8 +150,7 @@ public class DBManager {
 
 			while (rs.next()) {
 
-				user = new User(Integer.parseInt(userId), rs.getString(1), rs.getString(2), rs.getString(3),
-						rs.getString(4));
+				user = new User(userId, rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
 			}
 
 		} catch (Exception e) {
@@ -113,4 +159,121 @@ public class DBManager {
 
 		return user;
 	}
+
+	public static ArrayList<User> getAllUsers() {
+
+		ArrayList<User> allUsers = new ArrayList<>();
+		try {
+
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+
+			String getSql = "SELECT u.User_Id, u.UFullName, l.Login_Email, u.UMobile, u.UAddress FROM user u, login l WHERE u.Login_id = l.Login_Id";
+
+			PreparedStatement ps_getUserDetails = con.prepareStatement(getSql);
+
+			ResultSet rs = ps_getUserDetails.executeQuery();
+
+			while (rs.next()) {
+				allUsers.add(new User(String.valueOf(rs.getInt(1)), rs.getString(2), rs.getString(3), rs.getString(4),
+						rs.getString(4)));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return allUsers;
+
+	}
+	
+	public static User deleteUser(String userId) {
+		User user = null;
+		try {
+			user = getUserDetails(userId);
+			int loginId = getLoginId(userId);
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			String deleteFromUser = "DELETE FROM user WHERE User_Id = " + userId;
+			
+			if(loginId > 0) {
+				String deleteFromLogin = "DELETE FROM login WHERE Login_Id = " + loginId;
+				PreparedStatement ps_deleteFromUser = con.prepareStatement(deleteFromUser);
+				if(ps_deleteFromUser.executeUpdate() > 0) {
+					
+					PreparedStatement ps_deleteFromLogin = con.prepareStatement(deleteFromLogin);
+					if(ps_deleteFromLogin.executeUpdate() < 0) {
+						user = null;
+					}
+					
+				}
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+	
+	public static User updateUser(String userId, String username, String email, String mobileNumber, String address) {
+		User user = null;
+		try {
+			
+			int loginId = getLoginId(userId);
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			
+			String updateUserTable = "UPDATE user SET UFullName = ?, UMobile = ?, UAddress = ? WHERE User_Id = ?";
+			String updateLoginTable = "UPDATE login SET Login_Email = ? WHERE Login_Id = ?";
+			
+			PreparedStatement ps_updateUserTable = con.prepareStatement(updateUserTable);
+			ps_updateUserTable.setString(1, username);
+			ps_updateUserTable.setString(2, mobileNumber);
+			ps_updateUserTable.setString(3, address);
+			ps_updateUserTable.setInt(4, Integer.parseInt(userId));
+			
+			PreparedStatement ps_updateLoginTable = con.prepareStatement(updateLoginTable);
+			ps_updateLoginTable.setString(1, email);
+			ps_updateLoginTable.setInt(2, loginId);
+			
+			if(ps_updateUserTable.executeUpdate() > 0) {
+				
+				if(ps_updateLoginTable.executeUpdate() > 0) {
+					user = getUserDetails(userId);
+				}
+				
+			}
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return user;
+	}
+	
+	public static String resetPassword(String UserId, String currentPassword, String newPassword) {
+		
+		String status = null;
+		
+		try {
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			int loginId = getLoginId(UserId);
+			String passwordVerification = verifyPassword(UserId, currentPassword);
+			
+			if(passwordVerification.equalsIgnoreCase("success")) {
+				String changePassword = "UPDATE login SET Login_Password = " + newPassword;
+				
+				PreparedStatement ps_changePassword = con.prepareStatement(changePassword);
+				if(ps_changePassword.executeUpdate() > 0) {
+					status = "success";
+				}else {
+					status = "fail";
+				}
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return status;
+	}
+	
 }
