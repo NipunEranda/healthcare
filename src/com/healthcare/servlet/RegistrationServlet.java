@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.healthcare.model.User;
 import com.healthcare.service.DBManager;
 import com.healthcare.service.RegistrationService;
 import com.healthcare.service.RegistrationServiceImp;
@@ -19,7 +20,7 @@ public class RegistrationServlet {
 
 	RegistrationService registrationServiceObj = new RegistrationServiceImp();
 	@GET
-	@Path("/")
+	@Path("/hello")
 	@Produces(MediaType.TEXT_PLAIN)
 	public String hello() {
 		return "Hello";
@@ -34,6 +35,21 @@ public class RegistrationServlet {
 		
 		if(h.get("register").equalsIgnoreCase("success")) {
 			return "success";
+		}else {
+			return "fail";
+		}
+	}
+	
+	@Path("/getUserDetails")
+	@POST
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getUserDetails(@FormParam("User_Id")String User_Id) {
+		
+		User user = registrationServiceObj.getUserDetails(User_Id);
+		
+		if(user != null) {
+			return user.getUsername();
 		}else {
 			return "fail";
 		}
