@@ -12,19 +12,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.healthcare.model.User;
-import com.healthcare.service.RegistrationService;
-import com.healthcare.service.RegistrationServiceImp;
+import com.healthcare.service.PatientManagementService;
+import com.healthcare.service.PatientManagementServiceImp;
 
 @Path("/user")
-public class RegistrationServlet {
+public class PatientManagementServlet {
 
-	RegistrationService registrationServiceObj = new RegistrationServiceImp();
-	@GET
-	@Path("/hello")
-	@Produces(MediaType.TEXT_PLAIN)
-	public String hello() {
-		return "Hello";
-	}
+	PatientManagementService registrationServiceObj = new PatientManagementServiceImp();
 	
 	@POST
 	@Path("/registerUser")
