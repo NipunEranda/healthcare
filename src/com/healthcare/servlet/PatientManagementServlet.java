@@ -15,7 +15,7 @@ import com.healthcare.model.User;
 import com.healthcare.service.PatientManagementService;
 import com.healthcare.service.PatientManagementServiceImp;
 
-@Path("/user")
+@Path("/patient")
 public class PatientManagementServlet {
 
 	PatientManagementService registrationServiceObj = new PatientManagementServiceImp();
@@ -33,7 +33,7 @@ public class PatientManagementServlet {
 			return "fail";
 		}
 	}
-	
+
 	@POST
 	@Path("/getUserDetails")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
