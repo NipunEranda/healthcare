@@ -16,7 +16,7 @@ public class DBManager {
 	static final String DBDriver = "com.mysql.cj.jdbc.Driver";
 	static final String DBUrl = "jdbc:mysql://localhost:3306/healthcare";
 	static final String DBUser = "root";
-	static final String DBPassword = "4212";
+	static final String DBPassword = "";
 
 	static {
 		try {
