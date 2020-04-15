@@ -21,6 +21,24 @@ public class PatientManagementServiceImp implements PatientManagementService {
 
 		return h;
 	}
+	
+	@Override
+	public HashMap<String, String> login(String email, String password, String roleId) {
+		HashMap<String, String> h = new HashMap<>();
+		
+		HashMap<String, String> result = DBManager.login(email, password, roleId);
+		
+		if(result.get("status").equalsIgnoreCase("success")) {
+			h.put("status", "success");
+			h.put("userId", result.get("userId"));
+		}else {
+			h.put("status", "fail");
+			h.put("userId", null);
+		}
+		
+		return h;
+		
+	}
 
 	@Override
 	public User getUserDetails(String userId) {
@@ -63,6 +81,12 @@ public class PatientManagementServiceImp implements PatientManagementService {
 	public String verifyPassword(String User_Id, String currentPassword) {
 		String status = DBManager.verifyPassword(User_Id, currentPassword);
 		return status;
+	}
+
+	@Override
+	public String getRoleName(String roleId) {
+		String roleName = DBManager.getRoleName(roleId);
+		return null;
 	}
 
 }
