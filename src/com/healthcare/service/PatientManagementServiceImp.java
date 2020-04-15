@@ -6,7 +6,7 @@ import java.util.HashMap;
 import com.healthcare.model.User;
 
 
-public class RegistrationServiceImp implements RegistrationService {
+public class PatientManagementServiceImp implements PatientManagementService {
 
 	@Override
 	public HashMap<String, String> RegisterUser(String fullName, String email, String password,String mobileNumber, String address) {
