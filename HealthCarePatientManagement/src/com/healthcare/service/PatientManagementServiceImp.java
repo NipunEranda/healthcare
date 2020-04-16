@@ -9,10 +9,11 @@ import com.healthcare.model.User;
 public class PatientManagementServiceImp implements PatientManagementService {
 
 	@Override
-	public HashMap<String, String> RegisterUser(String fullName, String email, String password,String mobileNumber, String address) {
+	public HashMap<String, String> RegisterUser(String firstName, String lastName, String age, String gender,
+			String address, String mobileNumber, String email, String password) {
 		HashMap<String, String> h = new HashMap<>();
 
-		int i = DBManager.registerUser(fullName, email, password, mobileNumber, address);
+		int i = DBManager.registerUser(firstName, lastName, age, gender, address, mobileNumber,email, password);
 		if (i > 0) {
 			h.put("register", "success");
 		} else {
@@ -42,8 +43,9 @@ public class PatientManagementServiceImp implements PatientManagementService {
 	}
 
 	@Override
-	public User updateUser(String userId, String username, String email, String mobileNumber, String address) {
-		User user = DBManager.updateUser(userId, username, email, mobileNumber, address);
+	public User updateUser(String userId, String firstName, String lastName, String age, String gender, String address,
+			String mobileNumber, String email) {
+		User user = DBManager.updateUser(userId, firstName, lastName, age, gender, address, mobileNumber, email);
 		return user;
 	}
 
