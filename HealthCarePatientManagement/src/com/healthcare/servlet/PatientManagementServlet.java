@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 import com.healthcare.model.User;
 import com.healthcare.service.PatientManagementService;
 import com.healthcare.service.PatientManagementServiceImp;
+import com.sun.jersey.spi.container.ParamQualifier;
 
 @Path("/patient")
 public class PatientManagementServlet {
@@ -25,9 +26,10 @@ public class PatientManagementServlet {
 	@POST
 	@Path("/registerUser")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
-	public String registerUser(@FormParam("username")String username, @FormParam("email")String email, @FormParam("password")String password, @FormParam("mobileNumber")String mobileNumber, @FormParam("address")String address){
-		HashMap<String, String> h = patientManagementServiceObj.RegisterUser(username, email, password, mobileNumber, address);
+	@Produces(MediaType.TEXT_PLAIN)
+	public String registerUser(@FormParam("firstName") String firstName, @FormParam("lastName") String lastName, @FormParam("age") String age, @FormParam("gender") String gender,
+			@FormParam("address") String address, @FormParam("mobileNumber") String mobileNumber, @FormParam("email") String email, @FormParam("password") String password){
+		HashMap<String, String> h = patientManagementServiceObj.RegisterUser(firstName, lastName, age, gender, address, mobileNumber, email, password);
 		
 		if(h.get("register").equalsIgnoreCase("success")) {
 			return "success";
@@ -41,8 +43,8 @@ public class PatientManagementServlet {
 	@Path("/getUserDetails")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getUserDetails(@FormParam("User_Id") String User_Id) {
-		User user = patientManagementServiceObj.getUserDetails(User_Id);
+	public User getUserDetails(@FormParam("userId") String userId) {
+		User user = patientManagementServiceObj.getUserDetails(userId);
 		return user;
 	}
 	
@@ -59,8 +61,8 @@ public class PatientManagementServlet {
 	@Path("/deleteUser")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User deleteUser(@FormParam("User_Id") String User_Id) {
-		User user = patientManagementServiceObj.deleteUser(User_Id);
+	public User deleteUser(@FormParam("userId") String userId) {
+		User user = patientManagementServiceObj.deleteUser(userId);
 		return user;
 	}
 	
@@ -68,8 +70,8 @@ public class PatientManagementServlet {
 	@Path("/updateUser")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User updateUser(@FormParam("User_Id") String User_Id, @FormParam("username")String username, @FormParam("email")String email, @FormParam("mobileNumber")String mobileNumber, @FormParam("address")String address) {
-		User user = patientManagementServiceObj.updateUser(User_Id, username, email, mobileNumber, address);
+	public User updateUser(@FormParam("userId") String userId,@FormParam("firstName") String firstName,@FormParam("lastName") String lastName,@FormParam("age") String age,@FormParam("gender") String gender,@FormParam("address") String address,@FormParam("mobileNumber") String mobileNumber,@FormParam("email") String email) {
+		User user = patientManagementServiceObj.updateUser(userId, firstName, lastName, age, gender, address, mobileNumber,email);
 		return user;
 	}
 	
