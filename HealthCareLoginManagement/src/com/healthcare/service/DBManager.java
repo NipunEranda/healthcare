@@ -27,68 +27,6 @@ public class DBManager {
 		}
 	}
 
-	public static int registerUser(String fullName, String email, String password, String mobileNumber,
-			String address) {
-
-		int i = 0;
-		int j = 0;
-
-		try {
-
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-
-			String insertSQL1 = "INSERT INTO login VALUES(?, ?, ?, ?)";
-			String insertSQL2 = "INSERT INTO user VALUES(?, ?, ?, ?, ?)";
-			String emailVarification = "SELECT * FROM login WHERE Login_Email = ?";
-			String getUId = "SELECT Login_Id FROM login WHERE Login_Email = ?";
-
-			PreparedStatement ps_emailVarification = con.prepareStatement(emailVarification);
-			ps_emailVarification.setString(1, email);
-
-			ResultSet rs1 = ps_emailVarification.executeQuery();
-
-			if (rs1.first() == false) {
-
-				PreparedStatement ps_insertLogin = con.prepareStatement(insertSQL1);
-				ps_insertLogin.setInt(1, 0);
-				ps_insertLogin.setInt(2, 2);
-				ps_insertLogin.setString(3, email);
-				ps_insertLogin.setString(4, password);
-				i = ps_insertLogin.executeUpdate();
-
-				PreparedStatement ps_getUId = con.prepareStatement(getUId);
-				ps_getUId.setString(1, email);
-
-				ResultSet rs2 = ps_getUId.executeQuery();
-
-				while (rs2.next()) {
-
-					if (i > 0) {
-
-						PreparedStatement ps_insertUser = con.prepareStatement(insertSQL2);
-						ps_insertUser.setInt(1, 0);
-						ps_insertUser.setInt(2, rs2.getInt(1));
-						ps_insertUser.setString(3, fullName);
-						ps_insertUser.setString(4, mobileNumber);
-						ps_insertUser.setString(5, address);
-						j = ps_insertUser.executeUpdate();
-
-						if (j < 0)
-							i = 0;
-					}
-
-				}
-
-			} else {
-				i = 0;
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return i;
-	}
-
 	public static HashMap<String, String> login(String email, String password, String roleId) {
 		HashMap<String, String> h = new HashMap<>();
 
@@ -106,6 +44,7 @@ public class DBManager {
 
 				if (rs_verifyLogin.getInt(2) == Integer.parseInt(roleId)) {
 
+					//Need PatientManagementAPI
 					User user = getUserDetailsByLoginId(String.valueOf(rs_verifyLogin.getInt(1)));
 					h.put("status", "success");
 					h.put("userId", user.getUserId());
@@ -191,31 +130,6 @@ public class DBManager {
 		return status;
 	}
 
-	public static User getUserDetails(String userId) {
-		User user = null;
-		try {
-
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-
-			String getSql = "SELECT u.UFullName, l.Login_Email, u.UMobile, u.UAddress FROM user u, login l WHERE u.User_Id = ? AND u.Login_id = l.Login_Id";
-
-			PreparedStatement ps_getUserDetails = con.prepareStatement(getSql);
-			ps_getUserDetails.setInt(1, Integer.parseInt(userId));
-
-			ResultSet rs = ps_getUserDetails.executeQuery();
-
-			while (rs.next()) {
-
-				user = new User(userId, rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return user;
-	}
-
 	public static User getUserDetailsByLoginId(String loginId) {
 		User user = null;
 		try {
@@ -233,94 +147,6 @@ public class DBManager {
 
 				user = new User(String.valueOf(rs.getInt(1)), rs.getString(2), rs.getString(3), rs.getString(4),
 						rs.getString(5));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return user;
-	}
-
-	public static ArrayList<User> getAllUsers() {
-
-		ArrayList<User> allUsers = new ArrayList<>();
-		try {
-
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-
-			String getSql = "SELECT u.User_Id, u.UFullName, l.Login_Email, u.UMobile, u.UAddress FROM user u, login l WHERE u.Login_id = l.Login_Id";
-
-			PreparedStatement ps_getUserDetails = con.prepareStatement(getSql);
-
-			ResultSet rs = ps_getUserDetails.executeQuery();
-
-			while (rs.next()) {
-				allUsers.add(new User(String.valueOf(rs.getInt(1)), rs.getString(2), rs.getString(3), rs.getString(4),
-						rs.getString(4)));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return allUsers;
-
-	}
-
-	public static User deleteUser(String userId) {
-		User user = null;
-		try {
-			user = getUserDetails(userId);
-			int loginId = getLoginId(userId);
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-			String deleteFromUser = "DELETE FROM user WHERE User_Id = " + userId;
-
-			if (loginId > 0) {
-				String deleteFromLogin = "DELETE FROM login WHERE Login_Id = " + loginId;
-				PreparedStatement ps_deleteFromUser = con.prepareStatement(deleteFromUser);
-				if (ps_deleteFromUser.executeUpdate() > 0) {
-
-					PreparedStatement ps_deleteFromLogin = con.prepareStatement(deleteFromLogin);
-					if (ps_deleteFromLogin.executeUpdate() < 0) {
-						user = null;
-					}
-
-				}
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return user;
-	}
-
-	public static User updateUser(String userId, String username, String email, String mobileNumber, String address) {
-		User user = null;
-		try {
-
-			int loginId = getLoginId(userId);
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-
-			String updateUserTable = "UPDATE user SET UFullName = ?, UMobile = ?, UAddress = ? WHERE User_Id = ?";
-			String updateLoginTable = "UPDATE login SET Login_Email = ? WHERE Login_Id = ?";
-
-			PreparedStatement ps_updateUserTable = con.prepareStatement(updateUserTable);
-			ps_updateUserTable.setString(1, username);
-			ps_updateUserTable.setString(2, mobileNumber);
-			ps_updateUserTable.setString(3, address);
-			ps_updateUserTable.setInt(4, Integer.parseInt(userId));
-
-			PreparedStatement ps_updateLoginTable = con.prepareStatement(updateLoginTable);
-			ps_updateLoginTable.setString(1, email);
-			ps_updateLoginTable.setInt(2, loginId);
-
-			if (ps_updateUserTable.executeUpdate() > 0) {
-
-				if (ps_updateLoginTable.executeUpdate() > 0) {
-					user = getUserDetails(userId);
-				}
-
 			}
 
 		} catch (Exception e) {
