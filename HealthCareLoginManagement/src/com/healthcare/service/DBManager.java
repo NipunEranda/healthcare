@@ -36,7 +36,7 @@ public class DBManager {
 
 				if (rs_verifyLogin.getInt(2) == Integer.parseInt(roleId)) {
 
-					String getUrl = "http://localhost:8080/HealthCarePatientManagement/webapi/patient/loginId/" + String.valueOf(8);
+					String getUrl = "http://localhost:8080/HealthCarePatientManagement/webapi/patient/loginId/" + String.valueOf(rs_verifyLogin.getInt(1));
 					JsonObject object = Response.getResponse(getUrl);
 					
 					h.put("status", "success");
