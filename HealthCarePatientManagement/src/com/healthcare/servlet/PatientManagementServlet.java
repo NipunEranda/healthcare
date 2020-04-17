@@ -18,8 +18,12 @@ import javax.ws.rs.core.Response;
 import org.json.JSONArray;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.healthcare.service.PatientManagementService;
 import com.healthcare.service.PatientManagementServiceImp;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 @Path("/patient")
 public class PatientManagementServlet {
@@ -38,10 +42,18 @@ public class PatientManagementServlet {
 	
 
 	@GET
-	@Path("/{userId}")
+	@Path("/userId/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getUserDetails(@PathParam("userId") String userId) {
 		JsonObject user = patientManagementServiceObj.getUserDetails(userId);
+		return Response.ok(user.toString()).build();
+	}
+	
+	@GET
+	@Path("/loginId/{loginId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUserDetailsByLoginId(@PathParam("loginId") String loginId) {
+		JsonObject user = patientManagementServiceObj.getUserDetailsByLoginId(loginId);
 		return Response.ok(user.toString()).build();
 	}
 
