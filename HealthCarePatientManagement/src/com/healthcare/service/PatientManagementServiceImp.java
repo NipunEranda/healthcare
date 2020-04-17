@@ -2,7 +2,9 @@ package com.healthcare.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
+import com.google.gson.JsonObject;
 import com.healthcare.model.User;
 
 
@@ -24,28 +26,28 @@ public class PatientManagementServiceImp implements PatientManagementService {
 	}
 
 	@Override
-	public User getUserDetails(String userId) {
-		User user = DBManager.getUserDetails(userId);
+	public JsonObject getUserDetails(String userId) {
+		JsonObject user = DBManager.getUserDetails(userId);
 		return user;
 	}
 
 	@Override
-	public ArrayList<User> getAllUsers() {
-		ArrayList<User> allUsers;
+	public List<String> getAllUsers() {
+		List<String> allUsers;
 		allUsers = DBManager.getAllUsers();
 		return allUsers;
 	}
 
 	@Override
-	public User deleteUser(String userId) {
-		User user = DBManager.deleteUser(userId);
+	public JsonObject deleteUser(String userId) {
+		JsonObject user = DBManager.deleteUser(userId);
 		return user;
 	}
 
 	@Override
-	public User updateUser(String userId, String firstName, String lastName, String age, String gender, String address,
+	public JsonObject updateUser(String userId, String firstName, String lastName, String age, String gender, String address,
 			String mobileNumber, String email) {
-		User user = DBManager.updateUser(userId, firstName, lastName, age, gender, address, mobileNumber, email);
+		JsonObject user = DBManager.updateUser(userId, firstName, lastName, age, gender, address, mobileNumber, email);
 		return user;
 	}
 

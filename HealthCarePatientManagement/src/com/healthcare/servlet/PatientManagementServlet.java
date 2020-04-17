@@ -10,13 +10,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import com.healthcare.model.User;
+import org.json.JSONArray;
+
+import com.google.gson.JsonObject;
 import com.healthcare.service.PatientManagementService;
 import com.healthcare.service.PatientManagementServiceImp;
-import com.sun.jersey.spi.container.ParamQualifier;
 
 @Path("/patient")
 public class PatientManagementServlet {
@@ -27,70 +30,68 @@ public class PatientManagementServlet {
 	@Path("/registerUser")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String registerUser(@FormParam("firstName") String firstName, @FormParam("lastName") String lastName, @FormParam("age") String age, @FormParam("gender") String gender,
+	public Response registerUser(@FormParam("firstName") String firstName, @FormParam("lastName") String lastName, @FormParam("age") String age, @FormParam("gender") String gender,
 			@FormParam("address") String address, @FormParam("mobileNumber") String mobileNumber, @FormParam("email") String email, @FormParam("password") String password){
 		HashMap<String, String> h = patientManagementServiceObj.RegisterUser(firstName, lastName, age, gender, address, mobileNumber, email, password);
-		
-		if(h.get("register").equalsIgnoreCase("success")) {
-			return "success";
-		}else {
-			return "fail";
-		}
+		return Response.ok(h.get("status").toString()).build();
 	}
 	
 
-	@POST
-	@Path("/getUserDetails")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@GET
+	@Path("/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getUserDetails(@FormParam("userId") String userId) {
-		User user = patientManagementServiceObj.getUserDetails(userId);
-		return user;
+	public Response getUserDetails(@PathParam("userId") String userId) {
+		JsonObject user = patientManagementServiceObj.getUserDetails(userId);
+		return Response.ok(user.toString()).build();
 	}
+
 	
 	@GET
 	@Path("/getAllUsers")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<User> getAllUsers() {
+	public Response getAllUsers() {
 		
-		List<User> userList = patientManagementServiceObj.getAllUsers();
-		return userList;
+		List<String> userList = patientManagementServiceObj.getAllUsers();
+		
+		JSONArray jsonArray = new JSONArray(userList);
+		return Response.ok(jsonArray.toString()).build();
 	}
+
 	
 	@DELETE
-	@Path("/deleteUser")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Path("/{userId}")
+	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User deleteUser(@FormParam("userId") String userId) {
-		User user = patientManagementServiceObj.deleteUser(userId);
-		return user;
+	public Response deleteUser(@PathParam("userId") String userId) {
+		JsonObject user = patientManagementServiceObj.deleteUser(userId);
+		return Response.ok(user.toString()).build();
 	}
 	
 	@PUT
 	@Path("/updateUser")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public User updateUser(@FormParam("userId") String userId,@FormParam("firstName") String firstName,@FormParam("lastName") String lastName,@FormParam("age") String age,@FormParam("gender") String gender,@FormParam("address") String address,@FormParam("mobileNumber") String mobileNumber,@FormParam("email") String email) {
-		User user = patientManagementServiceObj.updateUser(userId, firstName, lastName, age, gender, address, mobileNumber,email);
-		return user;
+	public Response updateUser(@FormParam("userId") String userId,@FormParam("firstName") String firstName,@FormParam("lastName") String lastName,@FormParam("age") String age,@FormParam("gender") String gender,@FormParam("address") String address,@FormParam("mobileNumber") String mobileNumber,@FormParam("email") String email) {
+		JsonObject user = patientManagementServiceObj.updateUser(userId, firstName, lastName, age, gender, address, mobileNumber,email);
+		return Response.ok(user.toString()).build();
 	}
 	
 	@PUT
 	@Path("/recordPatientCondition")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String recordPatientCondition(@FormParam("userId") String userId, @FormParam("patientCondition") String patientCondition) {
+	public Response recordPatientCondition(@FormParam("userId") String userId, @FormParam("patientCondition") String patientCondition) {
 		HashMap<String, String> h = patientManagementServiceObj.recordPatientCondition(userId, patientCondition);
-		return h.get("status");
+		return Response.ok(h.get("status").toString()).build();
 	}
 	
 	@PUT
 	@Path("/assignToHospital")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
-	public String assignToHospital(@FormParam("userId") String userId, @FormParam("hospitalId") String hospitalId) {
+	public Response assignToHospital(@FormParam("userId") String userId, @FormParam("hospitalId") String hospitalId) {
 		HashMap<String, String> h = patientManagementServiceObj.assignToHospital(userId, hospitalId);
-		return h.get("status");
+		return Response.ok(h.get("status").toString()).build();
 	}
 	
 }

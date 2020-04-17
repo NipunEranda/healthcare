@@ -8,8 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-import com.healthcare.model.Login;
+import com.google.gson.JsonObject;
 import com.healthcare.model.User;
 
 public class DBManager {
@@ -83,9 +84,9 @@ public class DBManager {
 							i = 0;
 						}else {
 							
-							User user = getUserDetailsByLoginId(String.valueOf(loginId));
+							JsonObject user = getUserDetailsByLoginId(String.valueOf(loginId));
 							PreparedStatement ps_insertPatient = con.prepareStatement(insertSQL3);
-							ps_insertPatient.setInt(1, user.getUserId());
+							ps_insertPatient.setInt(1, user.get("userId").getAsInt());
 							z = ps_insertPatient.executeUpdate();
 							
 							if(z < 0) {
@@ -126,8 +127,8 @@ public class DBManager {
 		return loginId;
 	}
 
-	public static User getUserDetails(String userId) {
-		User user = null;
+	public static JsonObject getUserDetails(String userId) {
+		JsonObject jsonUser = null;
 		try {
 
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
@@ -140,20 +141,19 @@ public class DBManager {
 			ResultSet rs = ps_getUserDetails.executeQuery();
 
 			while (rs.next()) {
-
-				Login login = new Login(rs.getInt(1), rs.getInt(9), rs.getString(8), null);
-				user = new User(Integer.parseInt(userId), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), login);
+				User user = new User(Integer.parseInt(userId), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7));
+				jsonUser = user.createUserObjWithLoginDetails(user, rs.getInt(1), rs.getInt(9), rs.getString(8));
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return user;
+		return jsonUser;
 	}
 
-	public static User getUserDetailsByLoginId(String loginId) {
-		User user = null;
+	public static JsonObject getUserDetailsByLoginId(String loginId) {
+		JsonObject jsonUser = null;
 		try {
 
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
@@ -166,21 +166,20 @@ public class DBManager {
 			ResultSet rs = ps_getUserDetails.executeQuery();
 
 			while (rs.next()) {
-
-				Login login = new Login(Integer.parseInt(loginId), rs.getInt(9), rs.getString(8), null);
-				user = new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7), login);
+				User user = new User(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), rs.getString(5), rs.getString(6), rs.getString(7));
+				jsonUser = user.createUserObjWithLoginDetails(user, Integer.parseInt(loginId), rs.getInt(9), rs.getString(8));
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return user;
+		return jsonUser;
 	}
 
-	public static ArrayList<User> getAllUsers() {
+	public static List<String> getAllUsers() {
 
-		ArrayList<User> allUsers = new ArrayList<>();
+		List<String> allUsers = new ArrayList<>();
 		try {
 
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
@@ -192,9 +191,9 @@ public class DBManager {
 			ResultSet rs = ps_getUserDetails.executeQuery();
 
 			while (rs.next()) {
-				Login login = new Login(rs.getInt(2), rs.getInt(10), rs.getString(9), null);
-				User user = new User(rs.getInt(1), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6), rs.getString(7), rs.getString(8), login);
-				allUsers.add(user);
+				User user = new User(rs.getInt(1), rs.getString(3), rs.getString(4), rs.getInt(5), rs.getString(6), rs.getString(7), rs.getString(8));
+				JsonObject object = user.createUserObjWithLoginDetails(user, rs.getInt(2), rs.getInt(10), rs.getString(9));
+				allUsers.add(object.toString());
 			}
 
 		} catch (Exception e) {
@@ -205,13 +204,13 @@ public class DBManager {
 
 	}
 
-	public static User deleteUser(String userId) {
-		User user = null;
+	public static JsonObject deleteUser(String userId) {
+		JsonObject user = null;
 		try {
 			user = getUserDetails(userId);
 			int loginId = getLoginId(userId);
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-			String deleteFromUser = "DELETE FROM user WHERE User_Id = " + userId;
+			String deleteFromUser = "DELETE FROM user WHERE userId = " + userId;
 
 			if (loginId > 0) {
 				String deleteFromLogin = "DELETE FROM login WHERE Login_Id = " + loginId;
@@ -221,6 +220,12 @@ public class DBManager {
 					PreparedStatement ps_deleteFromLogin = con.prepareStatement(deleteFromLogin);
 					if (ps_deleteFromLogin.executeUpdate() < 0) {
 						user = null;
+					}else {
+						String deleteFromPatient = "DELETE FROM patient WHERE userId = " + userId;
+						PreparedStatement ps_deleteFromPatient = con.prepareStatement(deleteFromPatient);
+						if(ps_deleteFromPatient.executeUpdate() < 0) {
+							user =null;
+						}
 					}
 
 				}
@@ -232,8 +237,8 @@ public class DBManager {
 		return user;
 	}
 
-	public static User updateUser(String userId, String firstName, String lastName, String age, String gender, String address, String mobileNumber,String email) {
-		User user = null;
+	public static JsonObject updateUser(String userId, String firstName, String lastName, String age, String gender, String address, String mobileNumber,String email) {
+		JsonObject user = null;
 		try {
 
 			int loginId = getLoginId(userId);
