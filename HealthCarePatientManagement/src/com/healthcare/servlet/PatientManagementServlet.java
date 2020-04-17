@@ -85,6 +85,14 @@ public class PatientManagementServlet {
 		return Response.ok(user.toString()).build();
 	}
 	
+	@GET
+	@Path("/PatientCondition/{userId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPatientCondition(@PathParam("userId") String userId) {
+		JsonObject patient = patientManagementServiceObj.getPatientCondition(userId);
+		return Response.ok(patient.toString()).build();
+	}
+	
 	@PUT
 	@Path("/recordPatientCondition")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)

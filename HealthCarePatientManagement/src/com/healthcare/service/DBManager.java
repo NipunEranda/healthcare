@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gson.JsonObject;
+import com.healthcare.model.Patient;
 import com.healthcare.model.User;
 import com.healthcare.util.DBConnection;
 
@@ -296,6 +297,29 @@ public class DBManager {
 		}
 
 		return h;
+	}
+	
+	public static JsonObject getPatientCondition(String userId) {
+		JsonObject patientObj = null;
+
+		try {
+			
+			Connection con = DBConnection.connect();
+			
+			String query = "SELECT * FROM patient WHERE userId = " + userId;
+			PreparedStatement ps_getPatientCondition = con.prepareStatement(query);
+			ResultSet rs = ps_getPatientCondition.executeQuery();
+			
+			while(rs.next()) {
+				Patient patient = new Patient();
+				patientObj = patient.createPatientJsonObject(rs.getInt(1), rs.getInt(2), rs.getString(3));
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return patientObj;
 	}
 
 	public static HashMap<String, String> assignToHospital(String userId, String hospitalId) {

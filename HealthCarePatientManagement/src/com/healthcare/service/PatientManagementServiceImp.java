@@ -69,4 +69,10 @@ public class PatientManagementServiceImp implements PatientManagementService {
 		return h;
 	}
 
+	@Override
+	public JsonObject getPatientCondition(String userId) {
+		JsonObject patient = DBManager.getPatientCondition(userId);
+		return patient;
+	}
+
 }
