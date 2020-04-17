@@ -44,7 +44,6 @@ public class DBManager {
 
 				if (rs_verifyLogin.getInt(2) == Integer.parseInt(roleId)) {
 
-					//Need PatientManagementAPI
 					User user = getUserDetailsByLoginId(String.valueOf(rs_verifyLogin.getInt(1)));
 					h.put("status", "success");
 					h.put("userId", user.getUserId());

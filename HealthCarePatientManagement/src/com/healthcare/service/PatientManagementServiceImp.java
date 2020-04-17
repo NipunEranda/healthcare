@@ -49,4 +49,17 @@ public class PatientManagementServiceImp implements PatientManagementService {
 		return user;
 	}
 
+	@Override
+	public HashMap<String, String> recordPatientCondition(String userId, String patientCondition) {
+		HashMap<String, String> h = DBManager.recordPatientCondition(userId, patientCondition);
+		return h;
+	}
+
+	@Override
+	public HashMap<String, String> assignToHospital(String userId, String hospitalId) {
+		HashMap<String, String> h = DBManager.assignToHospital(userId, hospitalId);
+		return h;
+	}
+
+
 }

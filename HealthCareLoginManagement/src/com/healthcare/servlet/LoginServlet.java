@@ -22,7 +22,7 @@ public class LoginServlet {
 	@POST
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public String login(@FormParam("email") String email, @FormParam("password") String password, @FormParam("roleId") String roleId) {
 		
 		String userId;
@@ -41,7 +41,7 @@ public class LoginServlet {
 	@POST
 	@Path("/getUserLoginId")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public String getUserLoginId(@FormParam("UserId") String User_Id) {
 		int loginId = loginServiceObj.getUserLoginId(User_Id);
 		return String.valueOf(loginId);
@@ -59,7 +59,7 @@ public class LoginServlet {
 	@POST
 	@Path("/verifyPassword")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public String verifyPassword(@FormParam("UserId") String User_Id, @FormParam("currentPassword") String currentPassword) {
 		String status = loginServiceObj.verifyPassword(User_Id, currentPassword);
 		return status;
@@ -68,7 +68,7 @@ public class LoginServlet {
 	@POST
 	@Path("/getRoleName")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public String getRoleName(@FormParam("roleId") String role_Id) {
 		String roleName = loginServiceObj.getRoleName(role_Id);
 		return roleName;

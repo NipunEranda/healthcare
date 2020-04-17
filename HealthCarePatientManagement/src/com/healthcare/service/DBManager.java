@@ -32,6 +32,7 @@ public class DBManager {
 
 		int i = 0;
 		int j = 0;
+		int z = 0;
 
 		try {
 
@@ -39,8 +40,10 @@ public class DBManager {
 
 			String insertSQL1 = "INSERT INTO login VALUES(?, ?, ?, ?)";
 			String insertSQL2 = "INSERT INTO user VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+			String insertSQL3 = "INSERT INTO patient VALUES(?, NULL, NULL)";
 			String emailVarification = "SELECT * FROM login WHERE Login_Email = ?";
-			String getUId = "SELECT Login_Id FROM login WHERE Login_Email = ?";
+			String getLoginId = "SELECT Login_Id FROM login WHERE Login_Email = ?";
+			int loginId;
 
 			PreparedStatement ps_emailVarification = con.prepareStatement(emailVarification);
 			ps_emailVarification.setString(1, email);
@@ -56,18 +59,18 @@ public class DBManager {
 				ps_insertLogin.setString(4, password);
 				i = ps_insertLogin.executeUpdate();
 
-				PreparedStatement ps_getUId = con.prepareStatement(getUId);
-				ps_getUId.setString(1, email);
+				PreparedStatement ps_getLoginId = con.prepareStatement(getLoginId);
+				ps_getLoginId.setString(1, email);
 
-				ResultSet rs2 = ps_getUId.executeQuery();
+				ResultSet rs2 = ps_getLoginId.executeQuery();
 
 				while (rs2.next()) {
 
 					if (i > 0) {
-
+						loginId = rs2.getInt(1);
 						PreparedStatement ps_insertUser = con.prepareStatement(insertSQL2);
 						ps_insertUser.setInt(1, 0);
-						ps_insertUser.setInt(2, rs2.getInt(1));	
+						ps_insertUser.setInt(2, loginId);	
 						ps_insertUser.setString(3, firstName);
 						ps_insertUser.setString(4, lastName);
 						ps_insertUser.setInt(5, Integer.parseInt(age));
@@ -76,8 +79,20 @@ public class DBManager {
 						ps_insertUser.setString(8, mobileNumber);
 						j = ps_insertUser.executeUpdate();
 
-						if (j < 0)
+						if (j < 0) {
 							i = 0;
+						}else {
+							
+							User user = getUserDetailsByLoginId(String.valueOf(loginId));
+							PreparedStatement ps_insertPatient = con.prepareStatement(insertSQL3);
+							ps_insertPatient.setInt(1, user.getUserId());
+							z = ps_insertPatient.executeUpdate();
+							
+							if(z < 0) {
+								i = 0;
+								j = 0;
+							}
+						}
 					}
 
 				}
@@ -97,7 +112,7 @@ public class DBManager {
 		try {
 
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-			String getLoginId = "SELECT Login_id FROM user WHERE User_Id = " + userId;
+			String getLoginId = "SELECT loginId FROM user WHERE userId = " + userId;
 			PreparedStatement ps_getLoginId = con.prepareStatement(getLoginId);
 			ResultSet rs_getLoginId = ps_getLoginId.executeQuery();
 
@@ -117,7 +132,7 @@ public class DBManager {
 
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
 
-			String getSql = "SELECT u.loginId, u.firstName, u.lastName, u.age, u.gender, u.address, u.mobileNumber, l.Login_Email, l.Login_Role FROM user u, login l WHERE u.userId = ? AND u.loginId = l.Login_Id";
+			String getSql = "SELECT u.loginId, u.firstName, u.lastName, u.age, u.gender, u.mobileNumber, u.address, l.Login_Email, l.Login_Role FROM user u, login l WHERE u.userId = ? AND u.loginId = l.Login_Id";
 
 			PreparedStatement ps_getUserDetails = con.prepareStatement(getSql);
 			ps_getUserDetails.setInt(1, Integer.parseInt(userId));
@@ -143,7 +158,7 @@ public class DBManager {
 
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
 
-			String getSql = "SELECT u.userId, u.firstName, u.lastName, u.age, u.gender, u.address, u.mobileNumber, l.Login_Email, l.Login_Role FROM user u, login l WHERE u.loginId = ? AND u.Login_id = l.Login_Id";
+			String getSql = "SELECT u.userId, u.firstName, u.lastName, u.age, u.gender, u.mobileNumber, u.address, l.Login_Email, l.Login_Role FROM user u, login l WHERE u.loginId = ? AND u.LoginId = l.Login_Id";
 
 			PreparedStatement ps_getUserDetails = con.prepareStatement(getSql);
 			ps_getUserDetails.setInt(1, Integer.parseInt(loginId));
@@ -170,7 +185,7 @@ public class DBManager {
 
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
 
-			String getSql = "SELECT u.userId, u.loginId, u.firstName, u.lastName, u.age, u.gender, u.address, u.mobileNumber, l.Login_Email, l.Login_Role FROM user u, login l WHERE u.Login_id = l.Login_Id";
+			String getSql = "SELECT u.userId, u.loginId, u.firstName, u.lastName, u.age, u.gender, u.mobileNumber, u.address, l.Login_Email, l.Login_Role FROM user u, login l WHERE u.loginId = l.Login_Id";
 
 			PreparedStatement ps_getUserDetails = con.prepareStatement(getSql);
 
@@ -224,7 +239,7 @@ public class DBManager {
 			int loginId = getLoginId(userId);
 			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
 
-			String updateUserTable = "UPDATE user SET firstName = ?, lastName = ?, age = ?, gender = ?, address = ?, mobileNumber = ? WHERE User_Id = ?";
+			String updateUserTable = "UPDATE user SET firstName = ?, lastName = ?, age = ?, gender = ?, address = ?, mobileNumber = ? WHERE userId = ?";
 			String updateLoginTable = "UPDATE login SET Login_Email = ? WHERE Login_Id = ?";
 
 			PreparedStatement ps_updateUserTable = con.prepareStatement(updateUserTable);
@@ -255,4 +270,53 @@ public class DBManager {
 		return user;
 	}
 
+	public static HashMap<String, String> recordPatientCondition(String userId, String patientCondition){
+		
+		HashMap<String, String> h = new HashMap<>();
+		
+		try {
+			
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			
+			String updateSQL = "UPDATE patient SET patientCondition = ? WHERE userId = ?";
+			
+			PreparedStatement ps_insertPatientCondition = con.prepareStatement(updateSQL);
+			ps_insertPatientCondition.setString(1, patientCondition);
+			ps_insertPatientCondition.setInt(2, Integer.parseInt(userId));
+			
+			if(ps_insertPatientCondition.executeUpdate() > 0) {
+				h.put("status", "success");
+			}else {
+				h.put("status", "fail");
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return h;
+	}
+	
+	public static HashMap<String, String> assignToHospital(String userId, String hospitalId){
+		HashMap<String, String> h = new HashMap<>();
+		
+		try {
+			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			String updateSQL = "UPDATE patient SET hospitalId = ? WHERE userId = ?";
+			
+			PreparedStatement ps_updatehospitalId = con.prepareStatement(updateSQL);
+			ps_updatehospitalId.setInt(1, Integer.parseInt(hospitalId));
+			ps_updatehospitalId.setInt(2, Integer.parseInt(userId));
+			
+			if(ps_updatehospitalId.executeUpdate() > 0) {
+				h.put("status", "success");
+			}else {
+				h.put("status", "fail");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+		return h;
+	}
+	
 }
