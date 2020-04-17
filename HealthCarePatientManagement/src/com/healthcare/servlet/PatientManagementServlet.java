@@ -3,6 +3,7 @@ package com.healthcare.servlet;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -40,7 +41,6 @@ public class PatientManagementServlet {
 		return Response.ok(h.get("status").toString()).build();
 	}
 	
-
 	@GET
 	@Path("/userId/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -57,7 +57,6 @@ public class PatientManagementServlet {
 		return Response.ok(user.toString()).build();
 	}
 
-	
 	@GET
 	@Path("/getAllUsers")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -69,10 +68,8 @@ public class PatientManagementServlet {
 		return Response.ok(jsonArray.toString()).build();
 	}
 
-	
 	@DELETE
 	@Path("/{userId}")
-	//@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response deleteUser(@PathParam("userId") String userId) {
 		JsonObject user = patientManagementServiceObj.deleteUser(userId);
