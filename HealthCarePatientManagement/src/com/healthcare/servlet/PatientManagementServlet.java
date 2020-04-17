@@ -75,4 +75,22 @@ public class PatientManagementServlet {
 		return user;
 	}
 	
+	@PUT
+	@Path("/recordPatientCondition")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String recordPatientCondition(@FormParam("userId") String userId, @FormParam("patientCondition") String patientCondition) {
+		HashMap<String, String> h = patientManagementServiceObj.recordPatientCondition(userId, patientCondition);
+		return h.get("status");
+	}
+	
+	@PUT
+	@Path("/assignToHospital")
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String assignToHospital(@FormParam("userId") String userId, @FormParam("hospitalId") String hospitalId) {
+		HashMap<String, String> h = patientManagementServiceObj.assignToHospital(userId, hospitalId);
+		return h.get("status");
+	}
+	
 }
