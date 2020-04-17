@@ -5,11 +5,16 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.healthcare.model.User;
+import org.json.JSONObject;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.healthcare.model.Response;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 
 public class DBManager {
 
@@ -44,9 +49,11 @@ public class DBManager {
 
 				if (rs_verifyLogin.getInt(2) == Integer.parseInt(roleId)) {
 
-					User user = getUserDetailsByLoginId(String.valueOf(rs_verifyLogin.getInt(1)));
+					String getUrl = "http://localhost:8080/HealthCarePatientManagement/webapi/patient/loginId/" + String.valueOf(8);
+					JsonObject object = Response.getResponse(getUrl);
+					
 					h.put("status", "success");
-					h.put("userId", user.getUserId());
+					h.put("userId", object.get("userId").toString());
 				}else {
 					h.put("status", "fail");
 					h.put("userId", null);
@@ -127,32 +134,6 @@ public class DBManager {
 		}
 
 		return status;
-	}
-
-	public static User getUserDetailsByLoginId(String loginId) {
-		User user = null;
-		try {
-
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-
-			String getSql = "SELECT u.User_Id, u.UFullName, l.Login_Email, u.UMobile, u.UAddress FROM user u, login l WHERE u.Login_id = ? AND u.Login_id = l.Login_Id";
-
-			PreparedStatement ps_getUserDetails = con.prepareStatement(getSql);
-			ps_getUserDetails.setInt(1, Integer.parseInt(loginId));
-
-			ResultSet rs = ps_getUserDetails.executeQuery();
-
-			while (rs.next()) {
-
-				user = new User(String.valueOf(rs.getInt(1)), rs.getString(2), rs.getString(3), rs.getString(4),
-						rs.getString(5));
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return user;
 	}
 
 	public static String resetPassword(String UserId, String currentPassword, String newPassword) {

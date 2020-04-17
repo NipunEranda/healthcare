@@ -30,6 +30,12 @@ public class PatientManagementServiceImp implements PatientManagementService {
 		JsonObject user = DBManager.getUserDetails(userId);
 		return user;
 	}
+	
+	@Override
+	public JsonObject getUserDetailsByLoginId(String loginId) {
+		JsonObject user = DBManager.getUserDetailsByLoginId(loginId);
+		return user;
+	}
 
 	@Override
 	public List<String> getAllUsers() {
@@ -62,6 +68,5 @@ public class PatientManagementServiceImp implements PatientManagementService {
 		HashMap<String, String> h = DBManager.assignToHospital(userId, hospitalId);
 		return h;
 	}
-
 
 }

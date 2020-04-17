@@ -11,6 +11,7 @@ public interface PatientManagementService {
 
 	public HashMap<String, String> RegisterUser(String firstName, String lastName, String age, String gender, String address, String mobileNumber,String email, String password);
 	public JsonObject getUserDetails(String userId);
+	public JsonObject getUserDetailsByLoginId(String loginId);
 	public List<String> getAllUsers();
 	public JsonObject deleteUser(String userId);
 	public JsonObject updateUser(String userId, String firstName, String lastName, String age, String gender, String address, String mobileNumber,String email);
