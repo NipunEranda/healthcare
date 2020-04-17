@@ -2,6 +2,8 @@ package com.healthcare.model;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.gson.JsonObject;
+
 @XmlRootElement(name="user")
 public class User {
 	
@@ -12,7 +14,6 @@ public class User {
 	private String gender;
 	private String mobileNumber;
 	private String address;
-	private Login login;
 	
 	public User() {
 		
@@ -29,18 +30,39 @@ public class User {
 		this.mobileNumber = mobileNumber;
 		this.address = address;
 	}
-
-	public User(int userId, String firstName, String lastName, int age, String gender, String mobileNumber,
-			String address, Login login) {
-		super();
-		this.userId = userId;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.age = age;
-		this.gender = gender;
-		this.mobileNumber = mobileNumber;
-		this.address = address;
-		this.login = login;
+	
+	public JsonObject createUserObjWithBasicDetails() {
+		
+		JsonObject user = new JsonObject();
+		user.addProperty("userId", userId);
+		user.addProperty("firstName", lastName);
+		user.addProperty("age", age);
+		user.addProperty("gender", gender);
+		user.addProperty("mobileNumber", mobileNumber);
+		user.addProperty("address", address);
+		
+		return user;
+	}
+	
+	public JsonObject createUserObjWithLoginDetails(User iUser, int loginId, int loginRole, String email) {
+		
+		JsonObject user = new JsonObject();
+		JsonObject login = new JsonObject();
+		
+		login.addProperty("loginId", loginId);
+		login.addProperty("loginRole", loginRole);
+		login.addProperty("email", email);
+		
+		user.addProperty("userId", iUser.getUserId());
+		user.addProperty("firstName", iUser.getFirstName());
+		user.addProperty("lastName", iUser.getLastName());
+		user.addProperty("age", iUser.getAge());
+		user.addProperty("gender", iUser.getGender());
+		user.addProperty("mobileNumber", iUser.getMobileNumber());
+		user.addProperty("address", iUser.getAddress());
+		user.add("login", login);
+		
+		return user;
 	}
 
 	public int getUserId() {
@@ -97,14 +119,6 @@ public class User {
 
 	public void setAddress(String address) {
 		this.address = address;
-	}
-
-	public Login getLogin() {
-		return login;
-	}
-
-	public void setLogin(Login login) {
-		this.login = login;
 	}
 	
 }
