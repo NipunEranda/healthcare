@@ -16,5 +16,6 @@ public interface PatientManagementService {
 	public JsonObject deleteUser(String userId);
 	public JsonObject updateUser(String userId, String firstName, String lastName, String age, String gender, String address, String mobileNumber,String email);
 	public HashMap<String, String> recordPatientCondition(String userId, String patientCondition);
+	public JsonObject getPatientCondition(String userId);
 	public HashMap<String, String> assignToHospital(String userId, String hospitalId);
 }
