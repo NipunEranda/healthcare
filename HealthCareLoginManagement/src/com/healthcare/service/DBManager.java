@@ -12,32 +12,19 @@ import org.json.JSONObject;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.healthcare.model.Response;
+import com.healthcare.util.DBConnection;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 public class DBManager {
 
-	static final String DBDriver = "com.mysql.cj.jdbc.Driver";
-	static final String DBUrl = "jdbc:mysql://localhost:3306/healthcare";
-	static final String DBUser = "root";
-	static final String DBPassword = "4212";
-
-	static {
-		try {
-			Class.forName(DBDriver);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
-	}
-
 	public static HashMap<String, String> login(String email, String password, String roleId) {
 		HashMap<String, String> h = new HashMap<>();
 
 		try {
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
-
+			Connection con = DBConnection.connect();
+			
 			String verifyLogin = "SELECT * FROM login WHERE Login_Email = ? and Login_Password = ?";
 			PreparedStatement ps_verifyLogin = con.prepareStatement(verifyLogin);
 			ps_verifyLogin.setString(1, email);
@@ -72,7 +59,8 @@ public class DBManager {
 		int loginId = 0;
 		try {
 
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			Connection con = DBConnection.connect();
+			
 			String getLoginId = "SELECT Login_id FROM user WHERE User_Id = " + userId;
 			PreparedStatement ps_getLoginId = con.prepareStatement(getLoginId);
 			ResultSet rs_getLoginId = ps_getLoginId.executeQuery();
@@ -93,7 +81,8 @@ public class DBManager {
 
 		try {
 
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			Connection con = DBConnection.connect();
+			
 			String getroleName = "SELECT roleName FROM role WHERE role_id = " + roleId;
 			PreparedStatement ps_getroleName = con.prepareStatement(getroleName);
 			ResultSet rs_getroleName = ps_getroleName.executeQuery();
@@ -113,7 +102,9 @@ public class DBManager {
 		String status = null;
 
 		try {
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			
+			Connection con = DBConnection.connect();
+			
 			int loginId = getLoginId(UserId);
 			String getLoginId = "SELECT * FROM login WHERE Login_Id = ? AND Login_Password = ?";
 
@@ -129,7 +120,7 @@ public class DBManager {
 				status = "fail";
 			}
 
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -141,7 +132,7 @@ public class DBManager {
 		String status = null;
 
 		try {
-			Connection con = DriverManager.getConnection(DBUrl, DBUser, DBPassword);
+			Connection con = DBConnection.connect();
 			int loginId = getLoginId(UserId);
 			String passwordVerification = verifyPassword(UserId, currentPassword);
 
