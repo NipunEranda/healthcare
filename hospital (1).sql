@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 17, 2020 at 05:36 PM
+-- Generation Time: Apr 18, 2020 at 09:31 PM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.2.29
 
@@ -28,20 +28,20 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `hospital` (
-  `Hid` int(11) NOT NULL,
+  `HosCode` int(11) NOT NULL,
+  `Hid` varchar(11) NOT NULL,
   `Hname` varchar(20) NOT NULL,
-  `address` varchar(50) NOT NULL,
-  `telephone` varchar(10) NOT NULL
+  `address` varchar(20) NOT NULL,
+  `telephone` varchar(12) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `hospital`
 --
 
-INSERT INTO `hospital` (`Hid`, `Hname`, `address`, `telephone`) VALUES
-(1, 'lanka', 'colombo', '0114525879'),
-(5, 'asiri', 'colombo', '011555478'),
-(6, 'asiri', 'colombo', '011555478');
+INSERT INTO `hospital` (`HosCode`, `Hid`, `Hname`, `address`, `telephone`) VALUES
+(2, '555', 'jaya', 'maharagama', '01185426'),
+(7, '444', 'jaya', 'maharagama', '011854695');
 
 --
 -- Indexes for dumped tables
@@ -51,7 +51,7 @@ INSERT INTO `hospital` (`Hid`, `Hname`, `address`, `telephone`) VALUES
 -- Indexes for table `hospital`
 --
 ALTER TABLE `hospital`
-  ADD PRIMARY KEY (`Hid`);
+  ADD PRIMARY KEY (`HosCode`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -61,9 +61,10 @@ ALTER TABLE `hospital`
 -- AUTO_INCREMENT for table `hospital`
 --
 ALTER TABLE `hospital`
-  MODIFY `Hid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `HosCode` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
