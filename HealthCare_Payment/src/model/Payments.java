@@ -12,11 +12,11 @@ public class Payments {
 	private Connection connect() {
 		Connection con = null;
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("com.mysql.cj.jdbc.Driver");
 
 			// Provide the correct details: DBServer/DBName, username, password
-			con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/payment?useTimezone=true&serverTimezone=UTC",
-					"root", "");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/healthcare",
+					"root", "4212");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
