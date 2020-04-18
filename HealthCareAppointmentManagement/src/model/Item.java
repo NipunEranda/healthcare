@@ -9,15 +9,15 @@ private Connection connect()
  {
  Class.forName("com.mysql.jdbc.Driver");
 
- //Provide the correct details: DBServer/DBName, username, password
- con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/test", "root", "");
+ //Provide the correct details: DBServer/DBName, user name, password
+ con = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/healthcare", "root", "");
  }
  catch (Exception e)
  {e.printStackTrace();}
  return con;
  }
 
-public String insertItem(String code, String name, String price, String desc)
+public String insertItem(int id, String no, String date, String type, String desc, int docId, int hospId)
  {
  String output = "";
  try
@@ -26,15 +26,17 @@ public String insertItem(String code, String name, String price, String desc)
  if (con == null)
  {return "Error while connecting to the database for inserting."; }
  // create a prepared statement
- String query = " insert into items (`itemID`,`itemCode`,`itemName`,`itemPrice`,`itemDesc`)"
-     + " values (?, ?, ?, ?, ?)";
+ String query = " insert into appointments (`appId`,`appNo`,`appDate`,`appType`,`appDesc`,`appDocId`,`appHospId`)"
+     + " values (?, ?, ?, ?, ?, ?, ?)";
  PreparedStatement preparedStmt = con.prepareStatement(query);
  // binding values
- preparedStmt.setInt(1, 0);
- preparedStmt.setString(2, code);
- preparedStmt.setString(3, name);
- preparedStmt.setDouble(4, Double.parseDouble(price));
- preparedStmt.setString(5, desc); 
+ preparedStmt.setInt(1, id);
+ preparedStmt.setString(2, no);
+ preparedStmt.setString(3, date);
+ preparedStmt.setString(4, type);
+ preparedStmt.setString(5, desc);
+ preparedStmt.setInt(6, docId); 
+ preparedStmt.setInt(7, hospId); 
 //execute the statement
 preparedStmt.execute();
 con.close();
@@ -47,6 +49,7 @@ System.err.println(e.getMessage());
 }
 return output;
 }
+
 public String readItems()
 {
 String output = "";
@@ -56,29 +59,28 @@ Connection con = connect();
 if (con == null)
 {return "Error while connecting to the database for reading."; }
 // Prepare the html table to be displayed
-output = "<table border=\"1\"><tr><th>Item Code</th><th>Item Name</th><th>Item Price</th><th>Item Description</th><th>Update</th><th>Remove</th></tr>";
-String query = "select * from items";
+output = "<table border=\"1\"><tr><th>Appointment no</th><th>Appointment Date</th><th>Appointment Type</th><th>Appointment desc</th><th>Doctor</th><th>Hospital</th></tr>";
+String query = "select * from appointments";
 Statement stmt = con.createStatement();
 ResultSet rs = stmt.executeQuery(query);
 // iterate through the rows in the result set
 while (rs.next())
 {
-String itemID = Integer.toString(rs.getInt("itemID"));
-String itemCode = rs.getString("itemCode");
-String itemName = rs.getString("itemName");
-String itemPrice = Double.toString(rs.getDouble("itemPrice"));
-String itemDesc = rs.getString("itemDesc");
+String appId = Integer.toString(rs.getInt("appId"));
+String appNo = rs.getString("appNo");
+String appDate = rs.getDate("appDate").toString();
+String appType = rs.getString("appType");
+String appDesc = rs.getString("appDesc");
+String appDocId = Integer.toString(rs.getInt("appDocId"));
+String appHospId = Integer.toString(rs.getInt("appHospId"));
+
 // Add into the html table
-output += "<tr><td>" + itemCode + "</td>";
-output += "<td>" + itemName + "</td>";
-output += "<td>" + itemPrice + "</td>";
-output += "<td>" + itemDesc + "</td>";
-// buttons
-output += "<td><input name=\"btnUpdate\" type=\"button\" value=\"Update\" class=\"btn btn-secondary\"></td>"
-+ "<td><form method=\"post\" action=\"items.jsp\">"
-+ "<input name=\"btnRemove\" type=\"submit\" value=\"Remove\" class=\"btn btn-danger\">"
-+ "<input name=\"itemID\" type=\"hidden\" value=\"" + itemID
-+ "\">" + "</form></td></tr>";
+output += "<tr><td>" + appNo + "</td>";
+output += "<td>" + appDate + "</td>";
+output += "<td>" + appType + "</td>";
+output += "<td>" + appDesc + "</td>";
+output += "<td>" + appDocId + "</td>";
+output += "<td>" + appHospId + "</td>";
 }
 con.close();
 // Complete the html table
@@ -91,7 +93,7 @@ System.err.println(e.getMessage());
 }
 return output;
 } 
-public String updateItem(String ID, String code, String name, String price, String desc)
+public String updateItem(int appId, String appDate, String appDesc, int appDocId, int appHospId)
 {
 String output = "";
 try
@@ -100,14 +102,14 @@ Connection con = connect();
 if (con == null)
 {return "Error while connecting to the database for updating."; }
 // create a prepared statement
-String query = "UPDATE items SET itemCode=?,itemName=?,itemPrice=?,itemDesc=?WHERE itemID=?";
+String query = "UPDATE appointments SET appDate=? , appDesc=?, appDocId=?, appHospId=? WHERE appId=?";
 PreparedStatement preparedStmt = con.prepareStatement(query);
 // binding values
-preparedStmt.setString(1, code);
-preparedStmt.setString(2, name);
-preparedStmt.setDouble(3, Double.parseDouble(price));
-preparedStmt.setString(4, desc);
-preparedStmt.setInt(5, Integer.parseInt(ID));
+preparedStmt.setString(1, appDate);
+preparedStmt.setString(2, appDesc);
+preparedStmt.setInt(3, appDocId);
+preparedStmt.setInt(4, appHospId);
+preparedStmt.setInt(5, appId);
 // execute the statement
 preparedStmt.execute();
 con.close();
@@ -120,7 +122,8 @@ System.err.println(e.getMessage());
 }
 return output;
 }
-public String deleteItem(String itemID)
+
+public String deleteItem(int appId)
 {
 String output = "";
 try
@@ -129,10 +132,10 @@ Connection con = connect();
 if (con == null)
 {return "Error while connecting to the database for deleting."; }
 // create a prepared statement
-String query = "delete from items where itemID=?";
+String query = "delete from appointments where appId=?";
 PreparedStatement preparedStmt = con.prepareStatement(query);
 // binding values
-preparedStmt.setInt(1, Integer.parseInt(itemID));
+preparedStmt.setInt(1, appId);
 // execute the statement
 preparedStmt.execute();
 con.close();
