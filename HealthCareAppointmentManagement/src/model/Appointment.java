@@ -18,7 +18,7 @@ public class Appointment
 		 return con;
 	}
 
-	public String insertAppointment(int id, String no, String date, String type, String desc, int docId, int hospId)
+	public String insertAppointment(int id, String no, String date, String type, String desc, int docId, int hospId, int patientId)
 	{
 		 String output = "";
 		 try
@@ -29,8 +29,8 @@ public class Appointment
 				 return "Error while connecting to the database for inserting."; 
 			 }
 			 // create a prepared statement
-			 String query = " insert into appointments (`appId`,`appNo`,`appDate`,`appType`,`appDesc`,`appDocId`,`appHospId`)"
-			     + " values (?, ?, ?, ?, ?, ?, ?)";
+			 String query = " insert into appointments (`appId`,`appNo`,`appDate`,`appType`,`appDesc`,`appDoctor`,`appHospital`,`appPatient`)"
+			     + " values (?, ?, ?, ?, ?, ?, ?, ?)";
 			 PreparedStatement preparedStmt = con.prepareStatement(query);
 			 // binding values
 			 preparedStmt.setInt(1, id);
@@ -38,8 +38,9 @@ public class Appointment
 			 preparedStmt.setString(3, date);
 			 preparedStmt.setString(4, type);
 			 preparedStmt.setString(5, desc);
-			 preparedStmt.setInt(6, docId); 
-			 preparedStmt.setInt(7, hospId); 
+			 preparedStmt.setString(6, getDoctorNameById(docId)); 
+			 preparedStmt.setString(7, getHospitalNameById(hospId)); 
+			 preparedStmt.setString(8, getPatientNameById(patientId)); 
 			 //execute the statement
 			 preparedStmt.execute();
 			 con.close();
@@ -64,7 +65,7 @@ public class Appointment
 				return "Error while connecting to the database for reading."; 
 			}
 			// Prepare the html table to be displayed
-			output = "<table border=\"1\"><tr><th>Appointment no</th><th>Appointment Date</th><th>Appointment Type</th><th>Appointment desc</th><th>Doctor</th><th>Hospital</th></tr>";
+			output = "<table border=\"1\"><tr><th>Appointment no</th><th>Appointment Date</th><th>Appointment Type</th><th>Appointment desc</th><th>Doctor</th><th>Hospital</th><th>Patient</th></tr>";
 			String query = "select * from appointments";
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -76,16 +77,18 @@ public class Appointment
 				String appDate = rs.getDate("appDate").toString();
 				String appType = rs.getString("appType");
 				String appDesc = rs.getString("appDesc");
-				String appDocId = Integer.toString(rs.getInt("appDocId"));
-				String appHospId = Integer.toString(rs.getInt("appHospId"));
+				String appDoctor = rs.getString("appDoctor");
+				String appHospital = rs.getString("appHospital");
+				String appPatient =  rs.getString("appPatient");
 				
 				// Add into the html table
 				output += "<tr><td>" + appNo + "</td>";
 				output += "<td>" + appDate + "</td>";
 				output += "<td>" + appType + "</td>";
 				output += "<td>" + appDesc + "</td>";
-				output += "<td>" + appDocId + "</td>";
-				output += "<td>" + appHospId + "</td>";
+				output += "<td>" + appDoctor + "</td>";
+				output += "<td>" + appHospital + "</td>";
+				output += "<td>" + appPatient + "</td>";
 			}
 			con.close();
 			// Complete the html table
@@ -110,7 +113,7 @@ public class Appointment
 				return "Error while connecting to the database for updating.";
 			}
 			// create a prepared statement
-			String query = "UPDATE appointments SET appDate=? , appDesc=?, appDocId=?, appHospId=? WHERE appId=?";
+			String query = "UPDATE appointments SET appDate=? , appDesc=?, appDoctor=?, appHospital=? WHERE appId=?";
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			// binding values
 			preparedStmt.setString(1, appDate);
@@ -155,6 +158,84 @@ public class Appointment
 		{
 		output = "Error while deleting the item.";
 		System.err.println(e.getMessage());
+		}
+		return output;
+	}
+	
+	public String getDoctorNameById(int id) {
+		String output = "";
+		try
+		{
+			Connection con = connect();
+			if (con == null)
+			{
+				return "Error while connecting to the database for reading."; 
+			}
+			String query = "select * from doctor where docId = "+id;
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next())
+			{
+				output = rs.getString("docName");
+				
+			}
+			con.close();
+		}
+		catch (Exception e)
+		{
+			output = "empty";
+		}
+		return output;
+	}
+	
+	public String getPatientNameById(int id) {
+		String output = "";
+		try
+		{
+			Connection con = connect();
+			if (con == null)
+			{
+				return "Error while connecting to the database for reading."; 
+			}
+			String query = "select * from patient where patientId = "+id;
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next())
+			{
+				output = rs.getString("patientName");
+				
+			}
+			con.close();
+		}
+		catch (Exception e)
+		{
+			output = "empty";
+		}
+		return output;
+	}
+	
+	public String getHospitalNameById(int id) {
+		String output = "";
+		try
+		{
+			Connection con = connect();
+			if (con == null)
+			{
+				return "Error while connecting to the database for reading."; 
+			}
+			String query = "select * from hospital where hospId = "+id;
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			while (rs.next())
+			{
+				output = rs.getString("hospName");
+				
+			}
+			con.close();
+		}
+		catch (Exception e)
+		{
+			output = "empty";
 		}
 		return output;
 	}

@@ -39,8 +39,9 @@ public class AppointmentService
 		String appDesc = itemObject.get("appDesc").getAsString();
 		int appDocId = itemObject.get("appDocId").getAsInt(); 
 		int appHospId = itemObject.get("appHospId").getAsInt(); 
+		int appPatientId = itemObject.get("appPatientId").getAsInt(); 
 		 
-		String output = appointmentObj.insertAppointment(appId,appNo, appDate, appType, appDesc, appDocId, appHospId);
+		String output = appointmentObj.insertAppointment(appId,appNo, appDate, appType, appDesc, appDocId, appHospId,appPatientId);
 		return output;
 	}
 
