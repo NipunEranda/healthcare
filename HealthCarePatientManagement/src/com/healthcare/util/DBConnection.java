@@ -10,7 +10,7 @@ public class DBConnection {
 	private static String DBDriver = "com.mysql.cj.jdbc.Driver";
 	private static String DBUrl = "jdbc:mysql://localhost:3306/healthcare";
 	private static String DBUser = "root";
-	private static String DBPassword = "4212";
+	private static String DBPassword = "";
 
 	private DBConnection() {
 
