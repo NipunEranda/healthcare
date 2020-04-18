@@ -5,54 +5,53 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 import java.util.HashMap;
 
 import org.json.JSONObject;
 
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.healthcare.model.Response;
 import com.healthcare.util.DBConnection;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
 
 public class DBManager {
 
-	public static HashMap<String, String> login(String email, String password, String roleId) {
-		HashMap<String, String> h = new HashMap<>();
+	public static JsonObject login(String email, String password, String header) {
+		JsonObject l = new JsonObject();
 
 		try {
 			Connection con = DBConnection.connect();
-			
+
 			String verifyLogin = "SELECT * FROM login WHERE Login_Email = ? and Login_Password = ?";
 			PreparedStatement ps_verifyLogin = con.prepareStatement(verifyLogin);
 			ps_verifyLogin.setString(1, email);
 			ps_verifyLogin.setString(2, password);
 
 			ResultSet rs_verifyLogin = ps_verifyLogin.executeQuery();
+			if (rs_verifyLogin != null) {
+				while (rs_verifyLogin.next()) {
 
-			while (rs_verifyLogin.next()) {
+					String emailColonPassword = "authKey" + email + ":" + password;
+					String authString = Base64.getEncoder().encodeToString(emailColonPassword.getBytes());
 
-				if (rs_verifyLogin.getInt(2) == Integer.parseInt(roleId)) {
+					String getUrl = "http://localhost:8080/HealthCarePatientManagement/webapi/patient/loginId/"
+							+ String.valueOf(rs_verifyLogin.getInt(1));
+					JsonObject object = Response.getResponse(getUrl, header);
 
-					String getUrl = "http://localhost:8080/HealthCarePatientManagement/webapi/patient/loginId/" + String.valueOf(rs_verifyLogin.getInt(1));
-					JsonObject object = Response.getResponse(getUrl);
-					
-					h.put("status", "success");
-					h.put("userId", object.get("userId").toString());
-				}else {
-					h.put("status", "fail");
-					h.put("userId", null);
+					l.addProperty("status", "success");
+					l.addProperty("userId", object.get("userId").toString());
+					l.addProperty("authString", authString);
 				}
-
+			} else {
+				l.addProperty("status", "fail");
+				l.addProperty("userId", 0);
+				l.addProperty("authString", "");
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return h;
+		return l;
 	}
 
 	public static int getLoginId(String userId) {
@@ -60,8 +59,8 @@ public class DBManager {
 		try {
 
 			Connection con = DBConnection.connect();
-			
-			String getLoginId = "SELECT Login_id FROM user WHERE User_Id = " + userId;
+
+			String getLoginId = "SELECT loginId FROM user WHERE userId = " + userId;
 			PreparedStatement ps_getLoginId = con.prepareStatement(getLoginId);
 			ResultSet rs_getLoginId = ps_getLoginId.executeQuery();
 
@@ -82,7 +81,7 @@ public class DBManager {
 		try {
 
 			Connection con = DBConnection.connect();
-			
+
 			String getroleName = "SELECT roleName FROM role WHERE role_id = " + roleId;
 			PreparedStatement ps_getroleName = con.prepareStatement(getroleName);
 			ResultSet rs_getroleName = ps_getroleName.executeQuery();
@@ -102,9 +101,9 @@ public class DBManager {
 		String status = null;
 
 		try {
-			
+
 			Connection con = DBConnection.connect();
-			
+
 			int loginId = getLoginId(UserId);
 			String getLoginId = "SELECT * FROM login WHERE Login_Id = ? AND Login_Password = ?";
 
@@ -152,6 +151,49 @@ public class DBManager {
 		}
 
 		return status;
+	}
+
+	public static JsonObject getAutization(String header) {
+		JsonObject obj = new JsonObject();
+		try {
+			if (header != null) {
+				Connection con = DBConnection.connect();
+				byte[] decodedBytes = Base64.getDecoder().decode(header);
+				String decodedString = new String(decodedBytes);
+
+				if (decodedString.contains("authKey")) {
+
+					String value = decodedString.replace("authKey", "");
+					String[] values = value.split(":");
+
+					String verifyLogin = "SELECT * FROM login WHERE Login_Email = ? and Login_Password = ?";
+					String getRoleName = "SELECT * FROM role";
+					PreparedStatement ps_verifyLogin = con.prepareStatement(verifyLogin);
+					PreparedStatement ps_getRoleName = con.prepareStatement(getRoleName);
+					ps_verifyLogin.setString(1, values[0]);
+					ps_verifyLogin.setString(2, values[1]);
+
+					ResultSet rs_verifyLogin = ps_verifyLogin.executeQuery();
+
+					while (rs_verifyLogin.next()) {
+
+						ResultSet rs_getRoleName = ps_getRoleName.executeQuery();
+						while (rs_getRoleName.next()) {
+
+							obj.addProperty("status", "authorized");
+							obj.addProperty("role", rs_getRoleName.getString(2));
+
+						}
+
+					}
+
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return obj;
 	}
 
 }

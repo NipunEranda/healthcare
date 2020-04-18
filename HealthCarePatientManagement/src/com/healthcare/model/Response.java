@@ -1,4 +1,5 @@
 package com.healthcare.model;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.jersey.api.client.Client;
@@ -24,5 +25,4 @@ public class Response {
 	public static javax.ws.rs.core.Response sendErrorResponse() {
 		return javax.ws.rs.core.Response.serverError().entity("You're Not Authorized").build();
 	}
-	
 }
