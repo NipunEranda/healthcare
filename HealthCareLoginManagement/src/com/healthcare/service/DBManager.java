@@ -16,7 +16,7 @@ import com.healthcare.util.DBConnection;
 
 public class DBManager {
 
-	public static JsonObject login(String email, String password, String header) {
+	public static JsonObject login(String email, String password) {
 		JsonObject l = new JsonObject();
 
 		try {
@@ -36,10 +36,10 @@ public class DBManager {
 
 					String getUrl = "http://localhost:8080/HealthCarePatientManagement/webapi/patient/loginId/"
 							+ String.valueOf(rs_verifyLogin.getInt(1));
-					JsonObject object = Response.getResponse(getUrl, header);
+					JsonObject object = Response.getResponse(getUrl, authString);
 
 					l.addProperty("status", "success");
-					l.addProperty("userId", object.get("userId").toString());
+					l.addProperty("userId", object.get("userId").getAsString());
 					l.addProperty("authString", authString);
 				}
 			} else {
@@ -76,7 +76,7 @@ public class DBManager {
 
 	public static String getRoleName(String roleId) {
 
-		String roleName = null;
+		String roleName = "";
 
 		try {
 
@@ -98,7 +98,7 @@ public class DBManager {
 	}
 
 	public static String verifyPassword(String UserId, String currentPassword) {
-		String status = null;
+		String status = "";
 
 		try {
 
@@ -128,7 +128,7 @@ public class DBManager {
 
 	public static String resetPassword(String UserId, String currentPassword, String newPassword) {
 
-		String status = null;
+		String status = "";
 
 		try {
 			Connection con = DBConnection.connect();

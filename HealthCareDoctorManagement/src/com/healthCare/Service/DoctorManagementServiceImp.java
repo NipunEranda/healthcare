@@ -51,11 +51,6 @@ public class DoctorManagementServiceImp implements DoctorManageService {
 		DoctorUser user = DB.updateUser(Did, firstName, lastName, idnum, gender, address, mobileNumber, workplace, degree, email);
 		return user;
 	}
-
-
-
-	
-	
 	
 
 }

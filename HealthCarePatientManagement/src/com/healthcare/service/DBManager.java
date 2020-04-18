@@ -118,7 +118,7 @@ public class DBManager {
 	}
 
 	public static JsonObject getUserDetails(String userId) {
-		JsonObject jsonUser = null;
+		JsonObject jsonUser = new JsonObject();;
 		try {
 
 			Connection con = DBConnection.connect();
@@ -144,7 +144,7 @@ public class DBManager {
 	}
 
 	public static JsonObject getUserDetailsByLoginId(String loginId) {
-		JsonObject jsonUser = null;
+		JsonObject jsonUser = new JsonObject();
 		try {
 
 			Connection con = DBConnection.connect();
@@ -200,7 +200,7 @@ public class DBManager {
 	}
 
 	public static JsonObject deleteUser(String userId) {
-		JsonObject user = null;
+		JsonObject user = new JsonObject();
 		try {
 			user = getUserDetails(userId);
 			int loginId = getLoginId(userId);
@@ -215,12 +215,12 @@ public class DBManager {
 
 					PreparedStatement ps_deleteFromLogin = con.prepareStatement(deleteFromLogin);
 					if (ps_deleteFromLogin.executeUpdate() < 0) {
-						user = null;
+						user = new JsonObject();
 					} else {
 						String deleteFromPatient = "DELETE FROM patient WHERE userId = " + userId;
 						PreparedStatement ps_deleteFromPatient = con.prepareStatement(deleteFromPatient);
 						if (ps_deleteFromPatient.executeUpdate() < 0) {
-							user = null;
+							user = new JsonObject();
 						}
 					}
 
@@ -235,7 +235,7 @@ public class DBManager {
 
 	public static JsonObject updateUser(String userId, String firstName, String lastName, String age, String gender,
 			String address, String mobileNumber, String email) {
-		JsonObject user = null;
+		JsonObject user = new JsonObject();
 		try {
 
 			int loginId = getLoginId(userId);
@@ -300,7 +300,7 @@ public class DBManager {
 	}
 	
 	public static JsonObject getPatientCondition(String userId) {
-		JsonObject patientObj = null;
+		JsonObject patientObj = new JsonObject();
 
 		try {
 			

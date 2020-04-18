@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 
 public interface LoginService {
 
-	public JsonObject login(String email, String password, String header);
+	public JsonObject login(String email, String password);
 	public int getUserLoginId(String userId);
 	public String getRoleName(String roleId);
 	public String resetPassword(String User_Id, String currentPassword, String newPassword);

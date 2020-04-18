@@ -68,7 +68,7 @@ public class PatientManagementServlet {
 	public Response getUserDetailsByLoginId(@PathParam("loginId") String loginId,
 			@HeaderParam("authString") String authString) {
 
-		if (AccessFilter.checkAccess(new String[] { "admin" }, authString)) {
+		if (AccessFilter.checkAccess(new String[] { "admin", "patient", "doctor" }, authString)) {
 			JsonObject user = patientManagementServiceObj.getUserDetailsByLoginId(loginId);
 			return Response.ok(user.toString()).build();
 		} else {

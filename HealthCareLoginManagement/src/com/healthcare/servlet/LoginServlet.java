@@ -28,15 +28,15 @@ public class LoginServlet {
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(@FormParam("email") String email, @FormParam("password") String password, @HeaderParam("authString") String authString) {	
-		JsonObject obj = loginServiceObj.login(email, password, authString);
+	public Response login(@FormParam("email") String email, @FormParam("password") String password) {	
+		JsonObject obj = loginServiceObj.login(email, password);
 		return Response.ok(obj.toString()).build();
 	}
 	
 	@GET
 	@Path("/getUserLoginId/{UserId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUserLoginId(@PathParam("UserId") String User_Id, @HeaderParam("authString") String authString) {
+	public Response getUserLoginId(@PathParam("userId") String User_Id, @HeaderParam("authString") String authString) {
 		int loginId = loginServiceObj.getUserLoginId(User_Id);
 		return Response.ok(String.valueOf(loginId)).build();
 	}
@@ -45,7 +45,7 @@ public class LoginServlet {
 	@Path("/resetPassword")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response resetPassword(@FormParam("UserId") String User_Id, @FormParam("currentPassword") String currentPassword, @FormParam("newPassword") String newPassword, @HeaderParam("authString") String authString) {
+	public Response resetPassword(@FormParam("userId") String User_Id, @FormParam("currentPassword") String currentPassword, @FormParam("newPassword") String newPassword, @HeaderParam("authString") String authString) {
 		String status = loginServiceObj.resetPassword(User_Id, currentPassword, newPassword);
 		return Response.ok(status).build();
 	}
@@ -54,7 +54,7 @@ public class LoginServlet {
 	@Path("/verifyPassword")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response verifyPassword(@FormParam("UserId") String User_Id, @FormParam("currentPassword") String currentPassword, @HeaderParam("authString") String authString) {
+	public Response verifyPassword(@FormParam("userId") String User_Id, @FormParam("currentPassword") String currentPassword, @HeaderParam("authString") String authString) {
 		String status = loginServiceObj.verifyPassword(User_Id, currentPassword);
 		return Response.ok(status).build();
 	}

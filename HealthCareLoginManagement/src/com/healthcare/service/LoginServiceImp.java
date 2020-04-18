@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
 public class LoginServiceImp implements LoginService {
 
 	@Override
-	public JsonObject login(String email, String password, String header) {
-		JsonObject result = DBManager.login(email, password, header);
+	public JsonObject login(String email, String password) {
+		JsonObject result = DBManager.login(email, password);
 		return result;
 	}
 
