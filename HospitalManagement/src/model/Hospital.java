@@ -39,7 +39,7 @@ import java.sql.DriverManager;
                 // Prepare the html table to be displayed
                 output=new StringBuilder("<table border=\"1\"><tr><th>Hospital ID</th>"
                         + "<th>Hospital Name</th><th>Hospital Address</th>"
-                        +"<th>Hospital Tel</th>"
+                        + "<th>Hospital Tel</th>"
                         + "<th>Update</th><th>Remove</th></tr>");
                 String query="select * from hospital";
                 Statement stmt=con.createStatement();
@@ -74,18 +74,17 @@ import java.sql.DriverManager;
         }
 
 
-        public String insertHospital( String ID,String name, String address, String telephone)
-        {
-            String output = "";
-            try
-            {
-                Connection con = connect();
-                if (con == null)
-                {return "Error while connecting to the database for inserting."; }
+        public String insertHospital(String ID, String name, String address, String telephone) {
+            String output="";
+            try {
+                Connection con=connect();
+                if (con == null) {
+                    return "Error while connecting to the database for inserting.";
+                }
                 // create a prepared statement
-                String query=" insert into hospital ('HosCode',`Hid`,`Hname`,`address`,`telephone`)"
+                String query=" insert into hospital (`HosCode`,`Hid`,`Hname`,`address`,`telephone`)"
                         + " values (?, ?, ?, ?, ?)";
-                PreparedStatement preparedStmt = con.prepareStatement(query);
+                PreparedStatement preparedStmt=con.prepareStatement(query);
                 // binding values
                 preparedStmt.setInt(1, 0);
                 preparedStmt.setString(2, ID);
@@ -96,28 +95,26 @@ import java.sql.DriverManager;
                 // execute the statement
                 preparedStmt.execute();
                 con.close();
-                output = "Inserted successfully";
-            }
-            catch (Exception e)
-            {
-                output = "Error while inserting the Hospital.";
+                output="Inserted successfully";
+            } catch (Exception e) {
+                output="Error while inserting the Hospital.";
                 System.err.println(e.getMessage());
             }
             return output;
         }
 
 
-
-        public String updateHospital(String code,String ID,String name, String address, String telephone) {
+        public String updateHospital(String code, String ID, String name, String address, String telephone) {
             String output="";
             try {
                 Connection con=connect();
                 if (con == null) {
                     return "Error while connecting to the database for updating.";
                 }
-                String query="UPDATE hospital SET Hid=?,Hname=?,address=? ,telephone=?  where HosCode=?";
+                String query="UPDATE hospital SET Hid=?,Hname=?,address=? ,telephone=?  " +
+                        "where HosCode=?";
 
-                PreparedStatement preparedStmt = con.prepareStatement(query);
+                PreparedStatement preparedStmt=con.prepareStatement(query);
                 // binding values
                 preparedStmt.setString(1, ID);
                 preparedStmt.setString(2, name);
@@ -128,11 +125,9 @@ import java.sql.DriverManager;
                 // execute the statement
                 preparedStmt.execute();
                 con.close();
-                output = "Updated successfully";
-            }
-            catch (Exception e)
-            {
-                output = "Error while updating the Hospital.";
+                output="Updated successfully";
+            } catch (Exception e) {
+                output="Error while updating the Hospital.";
                 System.err.println(e.getMessage());
             }
             return output;
@@ -140,7 +135,7 @@ import java.sql.DriverManager;
         }
 
         public String deleteHospital(String HosCode) {
-            String output;
+            String output="";
             try {
                 Connection con=connect();
                 if (con == null) {

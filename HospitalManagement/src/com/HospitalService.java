@@ -54,8 +54,7 @@ public class HospitalService
         String address = hos1.get("address").getAsString();
         String telephone = hos1.get("telephone").getAsString();
 
-        String output;
-        output=hos.updateHospital(HosCode,Hid ,Hname ,address , telephone);
+        String output=hos.updateHospital(HosCode,Hid ,Hname ,address , telephone);
 
         return output;
     }
