@@ -1,12 +1,9 @@
 package com;
 
 import model.Hospital;
-//For REST Service
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-//For JSON
 import com.google.gson.*;
-//For XML
 import org.jsoup.*;
 import org.jsoup.parser.*;
 import org.jsoup.nodes.Document;
@@ -54,8 +51,7 @@ public class HospitalService
         String address = hos1.get("address").getAsString();
         String telephone = hos1.get("telephone").getAsString();
 
-        String output;
-        output=hos.updateHospital(HosCode,Hid ,Hname ,address , telephone);
+        String output=hos.updateHospital(HosCode,Hid ,Hname ,address , telephone);
 
         return output;
     }
