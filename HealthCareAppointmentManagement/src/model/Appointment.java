@@ -197,12 +197,12 @@ public class Appointment
 			{
 				return "Error while connecting to the database for reading."; 
 			}
-			String query = "select * from patient where patientId = "+id;
+			String query = "select * from user where userId = "+id;
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next())
 			{
-				output = rs.getString("patientName");
+				output = rs.getString("firstName");
 				
 			}
 			con.close();
