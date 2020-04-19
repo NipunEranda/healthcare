@@ -118,8 +118,8 @@ public class Appointment
 			// binding values
 			preparedStmt.setString(1, appDate);
 			preparedStmt.setString(2, appDesc);
-			preparedStmt.setInt(3, appDocId);
-			preparedStmt.setInt(4, appHospId);
+			preparedStmt.setString(3, getDoctorNameById(appDocId));
+			preparedStmt.setString(4, getHospitalNameById(appHospId));
 			preparedStmt.setInt(5, appId);
 			// execute the statement
 			preparedStmt.execute();
@@ -171,12 +171,12 @@ public class Appointment
 			{
 				return "Error while connecting to the database for reading."; 
 			}
-			String query = "select * from doctor where docId = "+id;
+			String query = "select * from doctor where Did = "+id;
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next())
 			{
-				output = rs.getString("docName");
+				output = rs.getString("firstName");
 				
 			}
 			con.close();
@@ -197,12 +197,12 @@ public class Appointment
 			{
 				return "Error while connecting to the database for reading."; 
 			}
-			String query = "select * from patient where patientId = "+id;
+			String query = "select * from user where userId = "+id;
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next())
 			{
-				output = rs.getString("patientName");
+				output = rs.getString("firstName");
 				
 			}
 			con.close();
@@ -223,12 +223,12 @@ public class Appointment
 			{
 				return "Error while connecting to the database for reading."; 
 			}
-			String query = "select * from hospital where hospId = "+id;
+			String query = "select * from hospital where Hid = "+id;
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next())
 			{
-				output = rs.getString("hospName");
+				output = rs.getString("Hname");
 				
 			}
 			con.close();
