@@ -1,11 +1,9 @@
 package com.healthcare.servlet;
 
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.security.DeclareRoles;
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -38,16 +36,11 @@ public class PatientManagementServlet {
 	public Response registerUser(@FormParam("firstName") String firstName, @FormParam("lastName") String lastName,
 			@FormParam("age") String age, @FormParam("gender") String gender, @FormParam("address") String address,
 			@FormParam("mobileNumber") String mobileNumber, @FormParam("email") String email,
-			@FormParam("password") String password, @HeaderParam("authString") String authString) {
+			@FormParam("password") String password) {
 
-		if (AccessFilter.checkAccess(new String[] { "patient", "admin" }, authString)) {
-			HashMap<String, String> h = patientManagementServiceObj.RegisterUser(firstName, lastName, age, gender,
-					address, mobileNumber, email, password);
-			return Response.ok(h.get("status").toString()).build();
-		} else {
-			return com.healthcare.model.Response.sendErrorResponse();
-		}
-
+		HashMap<String, String> h = patientManagementServiceObj.RegisterUser(firstName, lastName, age, gender, address,
+				mobileNumber, email, password);
+		return Response.ok(h.get("status").toString()).build();
 	}
 
 	@GET

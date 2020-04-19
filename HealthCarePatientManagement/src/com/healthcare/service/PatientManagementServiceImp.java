@@ -13,15 +13,7 @@ public class PatientManagementServiceImp implements PatientManagementService {
 	@Override
 	public HashMap<String, String> RegisterUser(String firstName, String lastName, String age, String gender,
 			String address, String mobileNumber, String email, String password) {
-		HashMap<String, String> h = new HashMap<>();
-
-		int i = DBManager.registerUser(firstName, lastName, age, gender, address, mobileNumber,email, password);
-		if (i > 0) {
-			h.put("register", "success");
-		} else {
-			h.put("register", "failed");
-		}
-
+		HashMap<String, String> h = DBManager.registerUser(firstName, lastName, age, gender, address, mobileNumber,email, password);
 		return h;
 	}
 

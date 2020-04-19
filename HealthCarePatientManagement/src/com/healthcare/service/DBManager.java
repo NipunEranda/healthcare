@@ -17,12 +17,13 @@ import com.healthcare.util.DBConnection;
 
 public class DBManager {
 
-	public static int registerUser(String firstName, String lastName, String age, String gender, String address,
+	public static HashMap<String, String> registerUser(String firstName, String lastName, String age, String gender, String address,
 			String mobileNumber, String email, String password) {
 
 		int i = 0;
 		int j = 0;
 		int z = 0;
+		HashMap<String, String> h = new HashMap<String, String>();
 
 		try {
 
@@ -94,7 +95,14 @@ public class DBManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return i;
+		
+		if(i > 0 && j > 0 && z > 0) {
+			h.put("status", "success");
+		}else {
+			h.put("status", "fail");
+		}
+		
+		return h;
 	}
 
 	public static int getLoginId(String userId) {
